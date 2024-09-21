@@ -1,0 +1,32 @@
+version: '3.1'
+services:
+
+  service:
+    build:
+      context: ./src
+    image: service
+    container_name: main-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/JavaCode
+      - SPRING_DATASOURCE_USERNAME=java
+      - SPRING_DATASOURCE_PASSWORD=java
+
+  db:
+    image: postgres:14-alpine
+    container_name: db
+    ports:
+      - "6542:5432"
+    environment:
+      - POSTGRES_DB=JavaCode
+      - POSTGRES_USER=java
+      - POSTGRES_PASSWORD=java
+#      - LANG=C.UTF-8
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10
