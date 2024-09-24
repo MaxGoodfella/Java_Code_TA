@@ -1,5 +1,6 @@
 package com.javacode.java_code_ta.model.models;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,10 +29,7 @@ public class Wallet {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID walletId;
 
+    @Column(name = "balance")
     private Long balance;
 
-    public Wallet(String uuid, Long balance) {
-        this.walletId = UUID.fromString(uuid);
-        this.balance = balance;
-    }
 }

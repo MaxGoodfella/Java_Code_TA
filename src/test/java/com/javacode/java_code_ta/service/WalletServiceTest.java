@@ -70,6 +70,7 @@ public class WalletServiceTest {
         verify(walletRepository).save(walletCaptor.capture());
         assertEquals(150L, walletCaptor.getValue().getBalance());
         verify(transactionRepository).save(any(Transaction.class));
+
     }
 
     @Test
@@ -275,6 +276,7 @@ public class WalletServiceTest {
         });
 
         verify(walletRepository, never()).findBalanceByWalletId(any(UUID.class));
+
     }
 
 }

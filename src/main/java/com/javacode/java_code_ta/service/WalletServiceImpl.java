@@ -72,7 +72,7 @@ public class WalletServiceImpl implements WalletService {
 
         Long balance = walletRepository.findBalanceByWalletId(id)
                 .orElseThrow(() -> new EntityNotFoundException(Wallet.class, String.valueOf(id),
-                        "Wallet with id = " + id.toString() + " hasn't been found."));
+                        "Wallet with id = " + id + " hasn't been found."));
 
         return String.valueOf(balance);
 

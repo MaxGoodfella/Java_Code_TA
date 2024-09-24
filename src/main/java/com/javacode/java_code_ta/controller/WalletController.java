@@ -36,7 +36,10 @@ public class WalletController {
     @GetMapping("/wallets/{id}")
     @ResponseStatus(HttpStatus.OK)
     public String getBalance(@PathVariable UUID id) {
-        return walletService.getBalance(id);
+        log.info("Start fetching balance for wallet with id = {}", id);
+        String balance = walletService.getBalance(id);
+        log.info("Finish fetching balance for wallet with id = {}", id);
+        return balance;
     }
 
 }

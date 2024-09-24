@@ -40,13 +40,13 @@ public class Transaction {
     private Wallet wallet;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "operation_type", nullable = false)
     private OperationType operationType;
 
-    @Column(nullable = false)
+    @Column(name = "amount", nullable = false)
     private Long amount;
 
-    @Column(nullable = false)
+    @Column(name = "transaction_date", nullable = false)
     private LocalDateTime transactionDate = LocalDateTime.now();
 
 }

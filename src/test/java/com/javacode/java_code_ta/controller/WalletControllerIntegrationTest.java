@@ -49,7 +49,6 @@ public class WalletControllerIntegrationTest {
     @SneakyThrows
     @Test
     void editBalance_WhenValidData() {
-
         when(walletService.editBalance(any())).thenReturn(walletDto);
 
         mockMvc.perform(post("/api/v1/wallet")

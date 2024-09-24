@@ -11,8 +11,8 @@ public class WalletMapper {
     public WalletDto toWalletDto(Wallet wallet, OperationType operationType, Long amount) {
         return WalletDto.builder()
                 .walletId(wallet.getWalletId())
-                .operationType(operationType)  // Добавляем operationType
-                .amount(amount)  // Добавляем amount
+                .operationType(operationType)
+                .amount(amount)
                 .build();
     }
 

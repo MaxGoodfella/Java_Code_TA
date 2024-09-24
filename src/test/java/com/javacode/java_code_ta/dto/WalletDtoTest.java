@@ -19,7 +19,6 @@ public class WalletDtoTest {
 
     @Test
     void testWalletDto() throws Exception {
-
         WalletDto walletDto = WalletDto
                 .builder()
                 .walletId(UUID.fromString("b1fbbf70-0b1d-4b92-946b-3c8a93b9be5b"))
@@ -35,7 +34,6 @@ public class WalletDtoTest {
                 .isEqualTo("DEPOSIT");
         assertThat(result).extractingJsonPathNumberValue("$.amount")
                 .isEqualTo(1000);
-
     }
 
 }

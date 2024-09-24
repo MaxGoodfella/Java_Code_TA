@@ -31,6 +31,7 @@ public class WalletRepositoryIntegrationTest {
         walletRepository.deleteAll();
     }
 
+
     @Test
     void findBalanceByWalletId_WhenWalletIdFound() {
         Optional<Long> balance = walletRepository
