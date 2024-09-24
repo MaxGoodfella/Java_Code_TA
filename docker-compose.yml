@@ -1,9 +1,11 @@
-version: '3.1'
+version: '3.8'
+
 services:
 
   service:
     build:
-      context: ./src
+      context: .
+      dockerfile: Dockerfile
     image: service
     container_name: main-service
     ports:
@@ -24,7 +26,6 @@ services:
       - POSTGRES_DB=JavaCode
       - POSTGRES_USER=java
       - POSTGRES_PASSWORD=java
-#      - LANG=C.UTF-8
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s
