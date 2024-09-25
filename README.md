@@ -41,6 +41,4 @@ make restart
 
 4. *Нагрузочное тестирование*
 
-Файл для Apache JMeter лежит в корневой директории и называется 'LoadTest (1000RPS)'.
-
 ![1000RPS_result.png](1000RPS_result.png)
