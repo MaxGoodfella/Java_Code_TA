@@ -1,12 +1,15 @@
 package com.javacode.java_code_ta.exceptions;
 
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,7 +35,9 @@ public class CustomExceptionHandler {
                 .build();
     }
 
-    @ExceptionHandler({IllegalArgumentException.class, BadRequestException.class, MissingServletRequestParameterException.class})
+    @ExceptionHandler({IllegalArgumentException.class, BadRequestException.class,
+            MissingServletRequestParameterException.class, ConstraintViolationException.class,
+            MethodArgumentTypeMismatchException.class, HttpMessageNotReadableException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ExceptionResponse handleBadRequestException(Exception e) {
         log.debug("400 Bad Request {}", e.getMessage(), e);
@@ -62,6 +67,17 @@ public class CustomExceptionHandler {
                 .status(HttpStatus.CONFLICT.toString())
                 .message(e.getMessage())
                 .reason("Conflicting data")
+                .build();
+    }
+
+    @ExceptionHandler(Throwable.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ExceptionResponse handleThrowable(Throwable e) {
+        log.debug("Получен статус 500 Internal Server Error {}", e.getMessage(), e);
+        return ExceptionResponse.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.toString())
+                .message(e.getMessage())
+                .reason("Internal server error")
                 .build();
     }
 

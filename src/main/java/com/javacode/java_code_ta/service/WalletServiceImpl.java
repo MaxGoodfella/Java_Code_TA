@@ -18,21 +18,19 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class WalletServiceImpl implements WalletService {
 
     private final WalletRepository walletRepository;
+
     private final TransactionRepository transactionRepository;
 
     @Transactional
     @Override
     public WalletDto editBalance(WalletDto walletDto) {
 
-        if (walletDto.getWalletId() == null) {
-            throw new IllegalArgumentException("Wallet ID cannot be null");
-        }
+        checkId(walletDto.getWalletId());
 
-        Wallet wallet = walletRepository.findById(walletDto.getWalletId())
+        Wallet wallet = walletRepository.findByWalletIdWithPessimisticWriteLock(walletDto.getWalletId())
                 .orElseThrow(() -> new EntityNotFoundException(Wallet.class, walletDto.getWalletId().toString(),
                         "Wallet with id = " + walletDto.getWalletId() + " hasn't been found."));
 
@@ -57,25 +55,32 @@ public class WalletServiceImpl implements WalletService {
                 .amount(walletDto.getAmount())
                 .transactionDate(LocalDateTime.now())
                 .build();
+
         transactionRepository.save(transaction);
 
         return WalletMapper.toWalletDto(savedWallet, operationType, walletDto.getAmount());
 
     }
 
+    @Transactional(readOnly = true)
     @Override
     public String getBalance(UUID id) {
 
-        if (id == null) {
-            throw new IllegalArgumentException("Wallet ID cannot be null");
-        }
+        checkId(id);
 
-        Long balance = walletRepository.findBalanceByWalletId(id)
+        Wallet wallet = walletRepository.findByWalletId(id)
                 .orElseThrow(() -> new EntityNotFoundException(Wallet.class, String.valueOf(id),
                         "Wallet with id = " + id + " hasn't been found."));
 
-        return String.valueOf(balance);
+        return String.valueOf(wallet.getBalance());
 
+    }
+
+
+    private void checkId(UUID id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Wallet ID cannot be null");
+        }
     }
 
 }

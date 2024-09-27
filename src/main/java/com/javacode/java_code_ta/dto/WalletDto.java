@@ -15,8 +15,10 @@ import java.util.UUID;
 @Builder
 public class WalletDto {
 
+    @NotNull
     private UUID walletId;
 
+    @NotNull
     private OperationType operationType;
 
     @NotNull

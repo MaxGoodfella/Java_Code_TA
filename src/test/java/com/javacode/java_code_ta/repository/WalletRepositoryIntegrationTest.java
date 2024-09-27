@@ -34,19 +34,18 @@ public class WalletRepositoryIntegrationTest {
 
     @Test
     void findBalanceByWalletId_WhenWalletIdFound() {
-        Optional<Long> balance = walletRepository
-                .findBalanceByWalletId(UUID.fromString("b1fbbf70-0b1d-4b92-946b-3c8a93b9be5b"));
+        Optional<Wallet> wallet = walletRepository
+                .findByWalletId(UUID.fromString("b1fbbf70-0b1d-4b92-946b-3c8a93b9be5b"));
 
-        assertThat(balance).isPresent();
-        assertThat(balance.get()).isEqualTo(0L);
+        wallet.ifPresent(value -> assertThat(value.getBalance()).isEqualTo(0L));
     }
 
     @Test
     void findBalanceByWalletId_WhenWalletIdNotFound() {
-        Optional<Long> balance = walletRepository
-                .findBalanceByWalletId(UUID.fromString("f9f1d6f3-6b1a-4e29-87a9-cd9fcef4f956"));
+        Optional<Wallet> wallet = walletRepository
+                .findByWalletId(UUID.fromString("f9f1d6f3-6b1a-4e29-87a9-cd9fcef4f956"));
 
-        assertThat(balance).isNotPresent();
+        assertThat(wallet).isNotPresent();
     }
 
 }

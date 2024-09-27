@@ -60,7 +60,7 @@ public class WalletServiceTest {
                 .amount(50L)
                 .build();
 
-        when(walletRepository.findById(walletId)).thenReturn(Optional.of(wallet));
+        when(walletRepository.findByWalletIdWithPessimisticWriteLock(walletId)).thenReturn(Optional.of(wallet));
         when(walletRepository.save(any(Wallet.class))).thenReturn(wallet);
 
         WalletDto result = walletService.editBalance(walletDto);
@@ -70,7 +70,6 @@ public class WalletServiceTest {
         verify(walletRepository).save(walletCaptor.capture());
         assertEquals(150L, walletCaptor.getValue().getBalance());
         verify(transactionRepository).save(any(Transaction.class));
-
     }
 
     @Test
@@ -84,7 +83,7 @@ public class WalletServiceTest {
                 .amount(50L)
                 .build();
 
-        when(walletRepository.findById(walletId)).thenReturn(Optional.empty());
+        when(walletRepository.findByWalletIdWithPessimisticWriteLock(walletId)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> walletService.editBalance(walletDto));
 
@@ -108,7 +107,7 @@ public class WalletServiceTest {
                 .amount(50L)
                 .build();
 
-        when(walletRepository.findById(walletId)).thenReturn(Optional.of(wallet));
+        when(walletRepository.findByWalletIdWithPessimisticWriteLock(walletId)).thenReturn(Optional.of(wallet));
         when(walletRepository.save(any(Wallet.class))).thenReturn(wallet);
 
         WalletDto result = walletService.editBalance(walletDto);
@@ -136,7 +135,7 @@ public class WalletServiceTest {
                 .amount(150L)
                 .build();
 
-        when(walletRepository.findById(walletId)).thenReturn(Optional.of(wallet));
+        when(walletRepository.findByWalletIdWithPessimisticWriteLock(walletId)).thenReturn(Optional.of(wallet));
 
         assertThrows(BadRequestException.class, () -> walletService.editBalance(walletDto));
 
@@ -160,7 +159,7 @@ public class WalletServiceTest {
                 .amount(50L)
                 .build();
 
-        when(walletRepository.findById(walletId)).thenReturn(Optional.of(wallet));
+        when(walletRepository.findByWalletIdWithPessimisticWriteLock(walletId)).thenReturn(Optional.of(wallet));
 
         assertThrows(IllegalArgumentException.class, () -> walletService.editBalance(walletDto));
 
@@ -184,7 +183,7 @@ public class WalletServiceTest {
                 .amount(50L)
                 .build();
 
-        when(walletRepository.findById(walletId)).thenReturn(Optional.of(wallet));
+        when(walletRepository.findByWalletIdWithPessimisticWriteLock(walletId)).thenReturn(Optional.of(wallet));
         when(walletRepository.save(any(Wallet.class))).thenReturn(wallet);
 
         walletService.editBalance(walletDto);
@@ -225,7 +224,7 @@ public class WalletServiceTest {
             walletService.getBalance(invalidId);
         });
 
-        verify(walletRepository, never()).findBalanceByWalletId(any(UUID.class));
+        verify(walletRepository, never()).findByWalletId(any(UUID.class));
 
     }
 
@@ -233,12 +232,16 @@ public class WalletServiceTest {
     void getBalance_WhenWalletFound_ThenReturnBalance() {
 
         UUID walletId = UUID.randomUUID();
-        when(walletRepository.findBalanceByWalletId(walletId)).thenReturn(Optional.of(100L));
+        Wallet wallet = new Wallet();
+        wallet.setWalletId(walletId);
+        wallet.setBalance(100L);
+
+        when(walletRepository.findByWalletId(walletId)).thenReturn(Optional.of(wallet));
 
         String result = walletService.getBalance(walletId);
 
         assertEquals("100", result);
-        verify(walletRepository).findBalanceByWalletId(walletId);
+        verify(walletRepository).findByWalletId(walletId);
 
     }
 
@@ -246,11 +249,11 @@ public class WalletServiceTest {
     void getBalance_WhenWalletNotFound_ThenThrowEntityNotFoundException() {
 
         UUID walletId = UUID.randomUUID();
-        when(walletRepository.findBalanceByWalletId(walletId)).thenReturn(Optional.empty());
+        when(walletRepository.findByWalletId(walletId)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> walletService.getBalance(walletId));
 
-        verify(walletRepository).findBalanceByWalletId(walletId);
+        verify(walletRepository).findByWalletId(walletId);
 
     }
 
@@ -261,7 +264,7 @@ public class WalletServiceTest {
 
         assertThrows(IllegalArgumentException.class, () -> walletService.getBalance(walletId));
 
-        verify(walletRepository, never()).findBalanceByWalletId(any(UUID.class));
+        verify(walletRepository, never()).findByWalletId(any(UUID.class));
 
     }
 
@@ -275,7 +278,7 @@ public class WalletServiceTest {
             walletService.getBalance(invalidId);
         });
 
-        verify(walletRepository, never()).findBalanceByWalletId(any(UUID.class));
+        verify(walletRepository, never()).findByWalletId(any(UUID.class));
 
     }
 
