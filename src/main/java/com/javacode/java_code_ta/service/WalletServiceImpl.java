@@ -12,6 +12,9 @@ import com.javacode.java_code_ta.repository.WalletRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -23,6 +26,8 @@ public class WalletServiceImpl implements WalletService {
     private final WalletRepository walletRepository;
 
     private final TransactionRepository transactionRepository;
+
+    private final JedisPool jedisPool;
 
     @Transactional
     @Override
@@ -72,8 +77,35 @@ public class WalletServiceImpl implements WalletService {
                 .orElseThrow(() -> new EntityNotFoundException(Wallet.class, String.valueOf(id),
                         "Wallet with id = " + id + " hasn't been found."));
 
-        return String.valueOf(wallet.getBalance());
+        return String.valueOf(getCachedBalance(wallet.getWalletId()));
 
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public String getCachedBalance(UUID id) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            String key = String.format("wallet:%s", id.toString());
+            String cachedBalance = jedis.get(key);
+
+            if (cachedBalance != null) {
+                return cachedBalance;
+            }
+            Wallet wallet = walletRepository.findByWalletId(id)
+                    .orElseThrow(() -> new EntityNotFoundException(Wallet.class, id.toString(),
+                            "Wallet with id = " + id + " hasn't been found."));
+
+            String balance = String.valueOf(wallet.getBalance());
+            jedis.setex(key, 3600, balance);
+
+            return balance;
+        } catch (EntityNotFoundException e) {
+            throw e;
+        } catch (JedisConnectionException e) {
+            throw new BadRequestException(Wallet.class, id.toString(), "Error while working with Redis: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Unexpected error occurred", e);
+        }
     }
 
 

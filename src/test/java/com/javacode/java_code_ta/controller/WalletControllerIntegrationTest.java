@@ -84,7 +84,7 @@ public class WalletControllerIntegrationTest {
     @SneakyThrows
     @Test
     void getBalanceById_WhenWalletFound() {
-        when(walletService.getBalance(any())).thenReturn(String.valueOf(1000L));
+        when(walletService.getCachedBalance(any())).thenReturn(String.valueOf(1000L));
 
         mockMvc.perform(get("/api/v1/wallets/{id}", walletId))
                         .andExpect(status().isOk())
@@ -94,9 +94,9 @@ public class WalletControllerIntegrationTest {
     @SneakyThrows
     @Test
     void getBalanceById_WhenWalletNotFound() {
-        when(walletService.getBalance(any()))
+        when(walletService.getCachedBalance(any()))
                 .thenThrow(new EntityNotFoundException(Wallet.class, walletDto.getWalletId().toString(),
-                "Wallet with id = " + walletDto.getWalletId() + " hasn't been found."));
+                        "Wallet with id = " + walletDto.getWalletId() + " hasn't been found."));
 
         mockMvc.perform(get("/api/v1/wallets/{id}", UUID.randomUUID()))
                         .andExpect(status().isNotFound());

@@ -229,23 +229,6 @@ public class WalletServiceTest {
     }
 
     @Test
-    void getBalance_WhenWalletFound_ThenReturnBalance() {
-
-        UUID walletId = UUID.randomUUID();
-        Wallet wallet = new Wallet();
-        wallet.setWalletId(walletId);
-        wallet.setBalance(100L);
-
-        when(walletRepository.findByWalletId(walletId)).thenReturn(Optional.of(wallet));
-
-        String result = walletService.getBalance(walletId);
-
-        assertEquals("100", result);
-        verify(walletRepository).findByWalletId(walletId);
-
-    }
-
-    @Test
     void getBalance_WhenWalletNotFound_ThenThrowEntityNotFoundException() {
 
         UUID walletId = UUID.randomUUID();

@@ -10,4 +10,6 @@ public interface WalletService {
 
     String getBalance(UUID id);
 
+    String getCachedBalance(UUID id);
+
 }

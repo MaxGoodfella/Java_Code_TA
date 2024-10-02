@@ -37,7 +37,7 @@ public class WalletController {
     @ResponseStatus(HttpStatus.OK)
     public String getBalance(@PathVariable UUID id) {
         log.info("Start fetching balance for wallet with id = {}", id);
-        String balance = walletService.getBalance(id);
+        String balance = walletService.getCachedBalance(id);
         log.info("Finish fetching balance for wallet with id = {}", id);
         return balance;
     }
